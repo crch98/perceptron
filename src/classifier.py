@@ -23,14 +23,3 @@ class Perceptron:
 			Y[i] = 1 if V[i] >= 0 else 0
 
 		return Y
-
-
-def test():
-	X = np.array([[0,0], [0,1], [1,0], [1,1]])
-	W = np.array([[1], [1]])
-	bias = 1.5
-	p = Perceptron(X, W, bias)
-	print(p.activation())
-
-test()
-
