@@ -52,6 +52,15 @@ class Gui:
         # create plot
         self.fig = Figure(figsize=(8, 8), dpi=100)
         self.ax = self.fig.add_subplot()
+        self._config_plot()
+        
+        canvas = FigureCanvasTkAgg(self.fig, master=plotframe)
+        canvas.draw()
+
+        canvas.mpl_connect("button_press_event", self.onclick)
+        canvas.get_tk_widget().grid(row=0, column=0)
+
+    def _config_plot(self):
         self.ax.spines['left'].set_position('center')
         self.ax.spines['bottom'].set_position('center')
         self.ax.spines['right'].set_visible(False)
@@ -60,13 +69,6 @@ class Gui:
         self.ax.set_ylim(-1, 1)
         self.ax.set_xticks([-1, 0, 1])
         self.ax.set_yticks([-1, 1])
-        
-        canvas = FigureCanvasTkAgg(self.fig, master=plotframe)
-        canvas.draw()
-
-        canvas.mpl_connect("button_press_event", self.onclick)
-        canvas.get_tk_widget().grid(row=0, column=0)
-
         
     def start(self):
         w_1 = 0
@@ -88,14 +90,7 @@ class Gui:
         type_b = np.empty([0, 2])
     
         self.ax.cla()
-        self.ax.spines['left'].set_position('center')
-        self.ax.spines['bottom'].set_position('center')
-        self.ax.spines['right'].set_visible(False)
-        self.ax.spines['top'].set_visible(False)
-        self.ax.set_xlim(-1, 1)
-        self.ax.set_ylim(-1, 1)
-        self.ax.set_xticks([-1, 0, 1])
-        self.ax.set_yticks([-1, 1])
+        self._config_plot()
 
         for i in range(Y.shape[0]):
             if Y[i] == 1:
@@ -108,7 +103,13 @@ class Gui:
                 self.ax.plot(a[0], a[1], 'go')
 
         # draw line
-        #for i in np.linspace(np.amin(X[:, :1]), np.amax(X[:, :1])):
+        self._draw_line(W, bias)
+
+        #self.ax.plot(type_a, 'ro')
+        #self.ax.plot(type_b, 'bo')
+        self.fig.canvas.draw()
+
+    def _draw_line(self, W, bias):
         for i in np.linspace(-1, 1):
             m = -(W[0] / W[1])
             b = (bias / W[1])
@@ -116,10 +117,6 @@ class Gui:
             y = (m * i) + b
 
             self.ax.plot(i, y, 'bo')
-
-        #self.ax.plot(type_a, 'ro')
-        #self.ax.plot(type_b, 'bo')
-        self.fig.canvas.draw()
     
     def onclick(self, event):
         try:
