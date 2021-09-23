@@ -7,7 +7,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 import numpy as np
-import time
 
 from classifier import Perceptron
 
@@ -38,26 +37,23 @@ class Gui:
         w_1, w_2, bias, epoch, lr = self._retrieve_values()
         W = np.asarray([bias, w_1, w_2])
 
-        for _ in range(epoch):
-            p = Perceptron(W, d, lr)
-            p.train(X)
-            Y = p.activation(X)
-            W = p.W
+        p = Perceptron(W, d, lr, epoch)
+        p.train(X)
+        Y = p.activation(X)
+        W = p.get_weights()
 
-            self.ax.cla()       # clean the points on canvas
-            self._config_plot() # set plot configs
+        self.ax.cla()       # clean the points on canvas
+        self._config_plot() # set plot configs
 
-            self._set_fields(W)
+        self._set_fields(W)
 
-            # draw the points
-            self._draw_classified_points(Y, X)
+        # draw the points
+        self._draw_classified_points(Y, X)
 
-            # draw line
-            self._draw_line(W[1:], W[0])
+        # draw line
+        self._draw_line(W[1:], -W[0])
 
-            self.fig.canvas.draw()
-            time.sleep(1)
-
+        self.fig.canvas.draw()
 
     def _draw_classified_points(self, Y, X):
         for i in range(Y.shape[0]):
@@ -88,13 +84,11 @@ class Gui:
         for i in np.linspace(-1, 1):
             m = -(W[0] / W[1])
             b = (bias / W[1])
-
             y = (m * i) + b
 
             self.ax.plot(i, y, 'bo')
 
     def _set_fields(self, W):
-        print(W)
         self.w1.set(W[1].item())
         self.w2.set(W[2].item())
         self.bias.set(W[0].item())
@@ -138,7 +132,8 @@ class Gui:
         # set plot frame
         plotframe = ttk.Frame(mainframe, borderwidth=5,
                               relief="ridge", width=900, height=900)
-        plotframe.grid(column=0, row=1, columnspan=7, rowspan=7,sticky=(N, S, E, W))
+        plotframe.grid(column=0, row=1, columnspan=7,
+                        rowspan=7,sticky=(N, S, E, W))
         
         # set entry for first weight
         ttk.Label(mainframe, text="Primer peso").grid(column=9,
