@@ -81,12 +81,18 @@ class Gui:
         return w_1, w_2, bias, epoch, lr
 
     def _draw_line(self, W, bias):
+        point_x = []
+        point_y = []
+
         for i in np.linspace(-1, 1):
             m = -(W[0] / W[1])
             b = (bias / W[1])
             y = (m * i) + b
 
-            self.ax.plot(i, y, 'bo')
+            point_x.append(i)
+            point_y.append(y)
+
+        self.ax.plot(point_x, point_y, 'b')
 
     def _set_fields(self, W):
         self.w1.set(W[1].item())

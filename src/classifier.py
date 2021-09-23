@@ -31,3 +31,4 @@ class Perceptron:
 
     def get_weights(self):
         return self.W
+
